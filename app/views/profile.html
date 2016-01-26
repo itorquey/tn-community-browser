@@ -1,0 +1,81 @@
+<div id="profile" ng-controller="ProfileCtrl as profile">
+  <div class="row">
+    <h1 class="page-header">
+      <span class="tag" ng-show="info.append==0">{{info.tag|preserve_space}}</span>
+      {{info.name|preserve_space}}
+      <span class="tag" ng-show="info.append==1">{{info.tag|preserve_space}}</span>
+    </h1>
+  </div>
+  <div class="row alerts" ng-repeat="alert in messages">
+    <div class="col-md-4 col-md-offset-4 alert alert-{{alert.type}}">
+      <span>{{alert.message}}</span>
+      <span class="glyphicon glyphicon-remove btn" ng-click="alert.pop()"></span>
+    </div>
+  </div>
+  <div class="row main">
+    <div class="col-md-7">
+      <h2 class="sub-header">Profile Details</h2>
+      <table class="table table-striped table-bordered table-rounded">
+        <tbody>
+          <tr><th>GUID</th><th>Name</th><th>Website</th></tr>
+          <tr>
+            <td>{{info.guid}}</td>
+            <td><a href='#' editable-text="info.name" e-required onbeforesave="setName($data)">{{info.name|preserve_space}}</a></td>
+            <td><a href='#' editable-text="info.website" onbeforesave="setWebsite($data)">{{info.website}}</a></td>
+          </tr>
+          <tr><th colspan="2">Joined</th><th>Online</th></tr>
+          <tr><td colspan="2">{{info.creation*1000|date:'yyyy-MM-dd HH:mm:ss Z'}}</td><td>{{info.online|yes_no|titleize}}</td></tr>
+          <tr><th colspan="3">Info</th></tr>
+          <tr><td colspan="3"><a href='#' e-rows="7" e-cols="60" editable-textarea="info.info" onbeforesave="setDescription($data)"><pre>{{info.info}}</pre></a></td></tr>
+        </tbody>
+      </table>
+      <h2 class="sub-header">Tribe Membership</h2>
+      <table class="table table-striped table-bordered table-rounded">
+        <thead><tr><th>ID</th><th>Name</th><th>Title</th><th>Rank</th><th>Active</th><th></th></tr></thead>
+        <tbody>
+          <tr ng-repeat="tribe in info.memberships">
+            <td>{{tribe.id}}</td>
+            <td><tribe-link id="tribe.id" tag="tribe.tag" name="tribe.name" append="tribe.append"></tribe-link></td>
+            <td>{{tribe.title}}</td>
+            <td>{{tribe.rank}}</td>
+            <td>
+              <input bs-switch type="radio" switch-size="small" ng-model="info.tag" ng-value="tribe.tag" ng-change="setActiveTribe(tribe.id,tribe.tag,tribe.append)"/>
+            </td>
+            <td>
+              <form editable-form name="rowform" onbeforesave="leaveTribe(tribe)" ng-show="rowform.$visible" class="form-buttons form-inline">
+                <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">Yes</button>
+                <button type="button" ng-disabled="rowform.$waiting" class="btn btn-link" ng-click="rowform.$cancel()">Cancel</button>
+              </form>
+              <div class="buttons" ng-show="!rowform.$visible">
+                <button class="btn-link" ng-click="rowform.$show()">Leave</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2 class="sub-header">Tribe Invitations</h2>
+      <table class="table table-striped table-bordered table-rounded">
+        <thead><tr><th>From</th><th>To</th><th>Expires</th><th></th><th></th></tr></thead>
+        <tbody>
+          <tr ng-repeat="invite in invites">
+            <td><player-link guid="invite.sender.guid" tag="invite.sender.tag" append="invite.sender.append" name="invite.sender.name"></player-link></td>
+            <td><tribe-link id="invite.clan.id" tag="invite.clan.tag" append="invite.clan.append" name="invite.clan.name"></tribe-link></td>
+            <td>{{invite.expire*1000|date:'yyyy-MM-dd HH:mm:ss Z'}}</td>
+            <td><span class="btn-link" ng-click="acceptInvite(invite)">Accept</span></td>
+            <td><span class="btn-link" ng-click="rejectInvite(invite)">Reject</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-5">
+      <h2 class="sub-header">History</h2>
+      <table class="table table-striped table-bordered table-rounded">
+        <thead><tr><th>Time</th><th>Description</th></tr></thead>
+        <tr ng-repeat="item in history">
+          <td>{{item.time*1000|date:'yyyy-MM-dd HH:mm:ss'}}</td>
+          <td history-item></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

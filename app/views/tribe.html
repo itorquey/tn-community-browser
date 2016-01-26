@@ -1,0 +1,134 @@
+<div id="tribe" ng-controller="TribeCtrl as tribe">
+  <div class="row">
+    <h1 class="page-header">
+      <span class="tag" ng-show="info.append==0">{{info.tag|preserve_space}}</span>{{info.name|preserve_space}}<span class="tag" ng-show="info.append==1">{{info.tag|preserve_space}}</span>
+    </h1>
+  </div>
+  <div class="row alerts" ng-repeat="alert in messages">
+    <div class="col-md-4 col-md-offset-4 alert alert-{{alert.type}}">
+      <span>{{alert.message}}</span>
+      <span class="glyphicon glyphicon-remove btn" ng-click="alert.pop()"></span>
+    </div>
+  </div>
+  <div class="row main">
+    <div class="col-md-6">
+      <h2 class="sub-header">Tribe Details</h2>
+      <table class="table table-striped table-bordered table-rounded">
+        <tbody>
+          <tr><th>ID</th><th colspan="2">Name</th><th colspan="2">Tag</th></tr>
+          <tr>
+            <td>{{info.id}}</td>
+            <td colspan="2">
+              <span ng-hide="canSetName">{{info.name|preserve_space}}</span>
+              <a href="#" ng-show="canSetName" editable-text="info.name" e-required onbeforesave="setName($data)">{{info.name|preserve_space}}</a>
+            </td>
+            <td colspan="2">
+              <span ng-hide="canSetTag">{{info.tag|preserve_space}}</span>
+              <form ng-show="canSetTag" editable-form name="tagform" class="form-buttons form-inline" onbeforesave="presetTag(info.tag,info.append)">
+                <div ng-show="tagform.$visible">
+                  <span editable-text="info.tag" e-name="tag" e-required onaftersave="setTag(info.tag,info.append)">{{info.tag|preserve_space}}</span>
+                  <span editable-select="info.append" e-name="append" e-required e-ng-options="s.k as s.v for s in [{k:'1',v:'Append'},{k:'0',v:'Prepend'}]">{{info.append|yes_no|titleize}}</span>
+                </div>
+                <span type="button" class="btn-link" ng-click="tagform.$show()" ng-hide="tagform.$visible">{{info.tag|preserve_space}}</span>
+                <span ng-show="tagform.$visible">
+                  <button type="submit" class="btn btn-primary glyphicon glyphicon-ok" ng-disabled="tagform.$waiting"></button>
+                  <button type="button" class="btn btn-default glyphicon glyphicon-remove" ng-disabled="tagform.$waiting" ng-click="tagform.$cancel()"></button>
+                </span>
+              </form>
+            </td>
+          </tr>
+          <tr><th colspan="5">Website</th></tr>
+          <tr><td colspan="5"><span ng-hide="canSetWebsite">{{info.website}}</span><a href='#' ng-show="canSetWebsite" editable-text="info.website" onbeforesave="setWebsite($data)">{{info.website}}</a></td></tr>
+          <tr><th colspan="3">Created</th><th>Recruiting</th><th>Active</th></tr>
+          <tr>
+            <td colspan="3">{{info.creation*1000|date:'yyyy-MM-dd HH:mm:ss Z'}}</td>
+            <td>
+              <span ng-hide="canSetRecruiting">{{info.recruiting|yes_no|titleize}}</span>
+              <a href='#' ng-show="canSetRecruiting" editable-select="info.recruiting" e-ng-options="s.key as s.value for s in [{key:'1',value:'Yes'}, {key:'0', value:'No'}]">{{info.recruiting|yes_no|titleize}}</a>
+            </td>
+            <td>{{info.active|yes_no|titleize}}</td>
+          </tr>
+          <tr><th colspan="3">Info</th><td colspan="2">Picture</td></tr>
+          <tr>
+            <td colspan="3">
+              <pre ng-hide="canSetInfo">{{info.info}}</pre>
+              <a href='#' ng-show="canSetInfo" e-rows="7" e-cols="60" editable-textarea="info.info" onbeforesave="setDescription($data)"><pre>{{info.info}}</pre></a>
+            </td>
+            <td colspan="2">
+              <span ng-hide="canSetPicture">{{info.picture || 'Not set'}}</span>
+              <a href='#' ng-show="canSetPicture" editable-text="info.picture" onbeforesave="setPicture($data)">{{info.picture || 'Not set'}}</a>
+            </td>
+          </tr>
+          <tr ng-show="canDisband"><th colspan="5">Disband</th></tr>
+          <tr ng-show="canDisband"><td colspan="5">
+            <a href='#' editable-select="info.disband" e-ng-options="s.k as s.v for s in [{k:'0',v:'No'},{k:'1',v:'Yes'}]" onbeforesave="disband($data)">Disband</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <h2 class="sub-header">Tribe Members</h2>
+      <table class="table table-striped table-bordered table-rounded">
+        <thead><tr><th>GUID</th><th>Name</th><th>Title</th><th>Rank</th><th>Online</th><th ng-show="canKickMembers">Kick</th><th ng-show="canSetMemberRanks">Edit</th></tr></thead>
+        <tbody>
+          <tr ng-repeat="player in info.members">
+            <td>{{player.guid}}</td>
+            <td><player-link guid="player.guid" tag="player.tag" name="player.name" append="player.append"></tribe-link></td>
+            <td>
+              <span ng-hide="canSetRank(player)">{{player.title}}</span>
+              <span ng-show="canSetRank(player)" editable-text="player.title" e-name="title" e-form="rowform">{{player.title}}</span>
+            </td>
+            <td>
+              <span ng-hide="canSetRank(player)">{{player.rank}}</span>
+              <span ng-show="canSetRank(player)" editable-select="player.rank" e-name="rank" e-form="rowform" e-ng-options="s.key as s.value for s in availableRanks">{{player.rank}}</span>
+            </td>
+            <td>{{player.online|yes_no|titleize}}</td>
+            <td ng-show="canKickMembers"><a href='#' ng-show="canKick(player)" editable-select="player.kick" e-ng-options="s for s in ['Yes','No']" onbeforesave="kickMember(player.guid,$data)">Kick</a></td>
+            <td ng-show="canSetMemberRanks"><div ng-show="canSetRank(player)">
+              <form editable-form name="rowform" ng-show="rowform.$visible" class="form-buttons form-inline" onbeforesave="setRank(player.guid,$data.rank,$data.title)">
+                <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">Save</button>
+                <button type="button" ng-disabled="rowform.$waiting" class="btn btn-link" ng-click="rowform.$cancel()">Cancel</button>
+              </form>
+              <button ng-hide="rowform.$visible" ng-click="rowform.$show()" class="btn btn-default">edit</button>
+            </div></td>
+          </tr>
+        </tbody>
+      </table>
+      <div ng-show="canSendInvite">
+        <h2 class="sub-header">Send Invitation</h2>
+        <form class="form-buttons form-inline" ng-submit="searchPlayers(searchName)">
+          <label class="sr-only" for="srchName">Player name</label>
+          <input type="text" class="form-control" ng-model="searchName" required placeholder="Player name"/>
+          <button type="submit" class="btn btn-primary glyphicon glyphicon-search"></button>
+          <span ng-show="searchAlert != null" class="alert alert-{{searchAlertType}}">{{searchAlert}}</span>
+        </form>
+        <table class="table table-striped table-bordered table-rounded" ng-show="showSearchResults">
+          <caption>Results</caption>
+          <thead><tr><th>GUID</th><th>Name</th><th>Invite</th></tr></thead>
+          <tbody>
+            <tr ng-repeat="player in searchResults"><td>{{player.guid}}</td><td><player-link guid="player.guid" tag="player.tag" append="player.append" name="player.name"></player-link></td><td>
+              <a href='#' editable-select="player.invite" e-ng-options="s for s in ['Yes','No']" onbeforesave="sendInvite(player.guid,$data)">Invite</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div ng-show="canViewInvites">
+        <h2 class="sub-header">Tribe Invitations</h2>
+        <table class="table table-striped table-bordered table-rounded">
+          <thead><tr><th>Sender</th><th>Recipient</th><th>Expires</th></tr></thead>
+          <tbody>
+            <tr ng-repeat="invite in invites"><td><player-link guid="invite.sender.guid" tag="invite.sender.tag" append="invite.sender.append" name="invite.sender.name"></player-link></td><td><player-link guid="invite.recipient.guid" tag="invite.recipient.tag" append="invite.recipient.append" name="invite.recipient.name"></player-link></td><td>{{invite.expire*1000|date:'yyyy-MM-dd HH:mm:ss Z'}}</td></tr>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <h2 class="sub-header">History</h2>
+      <table class="table table-striped table-bordered table-rounded">
+        <thead><tr><th>Time</th><th>Description</th></tr></thead>
+        <tr ng-repeat="item in history">
+          <td>{{item.time*1000|date:'yyyy-MM-dd HH:mm:ss Z'}}</td>
+          <td history-item></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

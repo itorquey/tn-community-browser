@@ -1,0 +1,55 @@
+<div id="player" ng-controller="PlayerCtrl as player">
+  <div class="row">
+    <h1 class="page-header">
+      <span class="tag" ng-show="info.append==0">{{info.tag|preserve_space}}</span>{{info.name|preserve_space}}<span class="tag" ng-show="info.append==1">{{info.tag|preserve_space}}</span>
+    </h1>
+  </div>
+  <div class="row alerts" ng-repeat="alert in messages">
+    <div class="col-md-4 col-md-offset-4 alert alert-{{alert.type}}">
+      <span>{{alert.message}}</span>
+      <span class="glyphicon glyphicon-remove btn" ng-click="alert.pop()"></span>
+    </div>
+  </div>
+  <div class="row main">
+    <div class="col-md-6">
+      <h2 class="sub-header">Profile Details</h2>
+      <table class="table table-striped table-bordered table-rounded">
+        <tbody>
+          <tr><th>GUID</th><th>Name</th><th>Website</th></tr>
+          <tr>
+            <td>{{info.guid}}</td>
+            <td>{{info.name|preserve_space}}</td>
+            <td>{{info.website}}</td>
+          </tr>
+          <tr><th colspan="2">Joined</th><th>Online</th></tr>
+          <tr><td colspan="2">{{info.creation*1000|date:'yyyy-MM-dd HH:mm:ss Z'}}</td><td>{{info.online|yes_no|titleize}}</td></tr>
+          <tr><th colspan="3">Info</th></tr>
+          <tr><td colspan="3"><pre>{{info.info}}</pre></td></tr>
+        </tbody>
+      </table>
+      <h2 class="sub-header">Tribe Membership</h2>
+      <table class="table table-striped table-bordered table-rounded">
+        <thead><tr><th>ID</th><th>Name</th><th>Title</th><th>Rank</th></tr></thead>
+        <tbody>
+          <tr ng-repeat="tribe in info.memberships">
+            <td>{{tribe.id}}</td>
+            <td><tribe-link id="tribe.id" tag="tribe.tag" name="tribe.name" append="tribe.append"></tribe-link></td>
+            <td>{{tribe.title}}</td>
+            <td>{{tribe.rank}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-6">
+      <h2 class="sub-header">History</h2>
+      <table class="table table-striped table-bordered table-rounded">
+        <thead><tr><th>Event</th><th>Time</th><th>Description</th></tr></thead>
+        <tr ng-repeat="item in history">
+          <td>{{item.type}}</td>
+          <td>{{item.time*1000|date:'yyyy-MM-dd HH:mm:ss Z'}}</td>
+          <td history-item></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

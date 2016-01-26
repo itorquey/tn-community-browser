@@ -1,0 +1,41 @@
+<div id="login" ng-controller="LoginCtrl as loginCtrl">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <div class="alert alert-warning" role="alert">
+        <h1 style="margin-top:0;">Warning!</h1>
+        <p class="lead">
+          Your password is sent to the community server unprotected, and could be intercepted by a skilled attacker.
+          If you use this password elsewhere, it is advised that you change it at those locations.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="row alerts" ng-repeat="alert in messages">
+    <div class="col-md-4 col-md-offset-4 alert alert-{{alert.type}}">
+      <span>{{alert.message}}</span>
+      <span class="glyphicon glyphicon-remove btn" ng-click="alert.pop()"></span>
+    </div>
+  </div>
+  <div class="row" ng-hide="isLoggedIn">
+    <div class="col-md-4 col-md-offset-4">
+      <form name="loginForm" ng-submit="login(username, password)">
+        <h2 class="sub-heading">Please sign in</h2>
+        <label for="inputUsername" class="sr-only">Username</label>
+        <input type="text" id="inputUsername" class="form-control" placeholder="Username" required autofocus ng-model="username"/>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required ng-model="password"/>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+    </div>
+  </div>
+  <div class="row" ng-show="isLoggedIn">
+    <div class="col-md-4 col-md-offset-4">
+      <form name="logoutForm" ng-submit="logout()">
+        <h2 class="sub-heading">Sign out</h2>
+        <label for="displayUsername" class="sr-only">Username</label>
+        <input type="text" id="displayUsername" class="form-control" readonly ng-model="username"/>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign out</button>
+      </form>
+    </div>
+  </div>
+</div>

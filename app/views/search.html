@@ -1,0 +1,39 @@
+<div id="search" ng-controller="SearchCtrl as search">
+  <div class="container-fluid">
+    <div class="navbar navbar-default">
+      <form class="navbar-form" ng-submit="search(searchName, searchMode)">
+        <label for="txtSearch" class="sr-only">Name</label>
+        <input type="text" id="txtSearch" class="form-control" required autofocus placeholder="Name..." ng-model="searchName" />
+        <label for="cmbMode" class="sr-only">Mode</label>
+        <select class="form-control" ng-model="searchMode" ng-options="v for v in searchModes"></select>
+        <button class="btn btn-primary glyphicon glyphicon-search"></button>
+      </form>
+    </div>
+  <div class="row alerts" ng-repeat="alert in messages">
+    <div class="col-md-4 col-md-offset-4 alert alert-{{alert.type}}">
+      <span>{{alert.message}}</span>
+      <span class="glyphicon glyphicon-remove btn" ng-click="alert.pop()"></span>
+    </div>
+  </div>
+    <div class="row" ng-show="showResults">
+      <table class="table table-striped table-bordered table-rounded" ng-show="resultMode=='Tribes'">
+        <caption>Results</caption>
+        <thead><tr><th>ID</th><th>Name</th></tr></thead>
+        <tbody>
+          <tr ng-repeat="tribe in tribeResults">
+            <td>{{tribe.id}}</td><td><tribe-link id="tribe.id" tag="" append="0" name="tribe.name"></tribe-link></td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="table table-striped table-bordered table-rounded" ng-show="resultMode=='Players'">
+        <caption>Results</caption>
+        <thead><tr><th>Guid</th><th>Name</th></tr></thead>
+        <tbody>
+          <tr ng-repeat="player in playerResults">
+            <td>{{player.guid}}</td><td><player-link guid="player.guid" tag="player.tag" append="player.append" name="player.name"></player-link></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,48 @@
+<div id="create" ng-controller="CreateTribeCtrl as create">
+  <div class="row">
+    <h1 class="page-header">Create a Tribe</h1>
+  </div>
+  <div class="row alerts" ng-repeat="alert in messages">
+    <div class="col-md-4 alert alert-{{alert.type}}">
+      <span>{{alert.message}}</span>
+      <span class="glyphicon glyphicon-remove btn" ng-click="alert.pop()"></span>
+    </div>
+  </div>
+  <div class="row main">
+    <div class="col-md-4">
+      <form role="form" ng-submit="createTribe(name,tag,append,recruiting,info)">
+        <div class="input-group">
+          <span class="input-group-addon">Name</span>
+          <label for="txtName" class="sr-only">Name</label>
+          <input type="text" id="txtName" class="form-control" ng-model="name" placeholder="Name" required autofocus/>
+        </div>
+        <div class="input-group">
+          <span class="input-group-addon">Tag</span>
+          <label for="txtTag" class="sr-only">Tag</label>
+          <input type="text" id="txtTag" class="form-control" ng-model="tag" placeholder="Tag" required/>
+        </div>
+        <div class="input-group">
+          <span class="input-group-addon">Append Tag</span>
+          <label for="cmbAppend" class="sr-only">Append Tag</label>
+          <select id="cmbAppend" class="form-control" ng-model="append" ng-options="v for v in ['Yes','No']"></select>
+        </div>
+        <div class="input-group">
+          <span class="input-group-addon">Recruiting</span>
+          <label for="cmbRecruiting" class="sr-only">Recruiting</label>
+          <select id="cmbRecruiting" class="form-control" ng-model="recruiting" ng-options="v for v in ['Yes','No']"></select>
+        </div>
+        <div class="input-group">
+          <span class="input-group-addon top">Info</span>
+          <label for="txtInfo" class="sr-only">Tribe Information</label>
+          <textarea id="txtInfo" class="form-control" ng-model="info" rows="5" placeholder="Tribe information"></textarea>
+        </div>
+        <div class="form-group">
+          <div class="col-md-offset-4 col-md-4" style="margin-top:1em;">
+            <button class="btn btn-success" type="submit">Create</button>
+            <button class="btn btn-link" type="button" ng-click="resetInputs()">Reset</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
